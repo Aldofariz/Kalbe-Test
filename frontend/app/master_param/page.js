@@ -1,8 +1,11 @@
 import React from 'react'
+import ParamPage from './ParamPage'
 
 const page = () => {
   return (
-    <div>Master Parameter</div>
+    <div className=''>
+      <ParamPage/>
+    </div>
   )
 }
 

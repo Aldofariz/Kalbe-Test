@@ -1,8 +1,11 @@
 import React from 'react'
+import MethodPage from './MethodPage'
 
 const page = () => {
   return (
-    <div>Master Method</div>
+    <div>
+      <MethodPage/>
+    </div>
   )
 }
 

@@ -1,8 +1,11 @@
 import React from 'react'
+import SamplePage from './SamplePage'
 
 const page = () => {
   return (
-    <div>Master Sample Type</div>
+    <div>
+      <SamplePage/>
+    </div>
   )
 }
 

@@ -1,8 +1,11 @@
 import React from 'react'
+import AnalysisPage from './AnalysisPage'
 
 const page = () => {
   return (
-    <div>Master analysis</div>
+    <div>
+      <AnalysisPage/>
+    </div>
   )
 }
 
