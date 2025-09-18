@@ -1,0 +1,45 @@
+// Master Parameter Endpoint
+
+GET http://localhost:5227/parameters
+
+POST http://localhost:5227/parameters
+
+PUT http://localhost:5227/parameters/id
+Content-Type: application/json
+
+{
+    "name": "Street fighter",
+    "release": "2021-12-12"
+}
+
+DELETE http://localhost:5227/parameters/id
+
+// Master Method Endpoint
+
+GET http://localhost:5227/methods
+
+POST http://localhost:5227/methods
+
+PUT http://localhost:5227/methods/id
+
+DELETE http://localhost:5227/methods/id
+
+// Master Sample Type Endpoint
+
+GET http://localhost:5227/sample
+
+POST http://localhost:5227/sample
+
+PUT http://localhost:5227/sample/id
+
+DELETE http://localhost:5227/sample/id
+
+// Master Analysis Endpoint
+
+GET http://localhost:5227/analysis
+
+POST http://localhost:5227/analysis
+
+PUT http://localhost:5227/analysis/id
+
+DELETE http://localhost:5227/analysis/id
