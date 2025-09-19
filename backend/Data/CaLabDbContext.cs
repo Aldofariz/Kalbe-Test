@@ -27,13 +27,13 @@ namespace CaLabApi.Data
 
             
             modelBuilder.Entity<McaAnalysis>()
-                .HasOne(a => a.Parameter) // gunakan navigation property
+                .HasOne(a => a.Parameter) 
                 .WithMany(p => p.Analyses)
                 .HasForeignKey(a => a.ParameterId)
                 .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<McaAnalysis>()
-                .HasOne(a => a.SampleType) // gunakan navigation property
+                .HasOne(a => a.SampleType) 
                 .WithMany(s => s.Analyses)
                 .HasForeignKey(a => a.SampleTypeId)
                 .OnDelete(DeleteBehavior.SetNull);

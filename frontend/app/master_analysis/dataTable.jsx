@@ -1,7 +1,6 @@
-// components/data-table.js
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -37,34 +36,38 @@ import {
 import { Label } from "@/components/ui/label";
 import { MoreHorizontal, ChevronLeft, ChevronRight, X } from "lucide-react";
 
-// Sample data - ganti dengan data Anda
+
 const sampleData = [
-  { code: "BCT", description: "Bacterial" },
-  { code: "BIC", description: "Bioindicator Sample" },
-  { code: "CMT", description: "Cosmetic" },
-  { code: "DFT", description: "Disinfectant" },
-  { code: "DLB", description: "Dialyzer" },
-  { code: "FNB", description: "Food & Beverage" },
-  { code: "H2O", description: "Water" },
-  { code: "HSR", description: "Hand Sanitizer" },
-  { code: "KIT", description: "Kit" },
-  { code: "LQD", description: "Liquid" },
-  // Tambahkan lebih banyak data untuk testing pagination
-  { code: "MED", description: "Medical Device" },
-  { code: "PHR", description: "Pharmaceutical" },
-  { code: "CHM", description: "Chemical" },
-  { code: "ENV", description: "Environmental" },
-  { code: "TOX", description: "Toxicology" },
-  { code: "MIC", description: "Microbiology" },
-  { code: "BIO", description: "Biotechnology" },
-  { code: "LAB", description: "Laboratory" },
+  { code: "BCT", description: "Bacterial", parameter: "Physical and Chemical", leadTime: 7 },
+  { code: "BIC", description: "Bioindicator Sample", parameter: "Physical and Chemical", leadTime: 7 },
+  { code: "CMT", description: "Cosmetic", parameter: "Physical and Chemical", leadTime: 7 },
+  { code: "DFT", description: "Disinfectant", parameter: "Physical and Chemical", leadTime: 7 },
+  { code: "DLB", description: "Dialyzer", parameter: "Physical and Chemical", leadTime: 7 },
+  { code: "FNB", description: "Food & Beverage", parameter: "Physical and Chemical", leadTime: 7 },
+  { code: "H2O", description: "Water", parameter: "Physical and Chemical", leadTime: 7 },
+  { code: "HSR", description: "Hand Sanitizer", parameter: "Physical and Chemical", leadTime: 7 },
+  { code: "KIT", description: "Kit", parameter: "Physical and Chemical", leadTime: 7 },
+  { code: "LQD", description: "Liquid", parameter: "Physical and Chemical", leadTime: 7 },
+  { code: "MED", description: "Medical Device", parameter: "Physical and Chemical", leadTime: 7  },
+  { code: "PHR", description: "Pharmaceutical", parameter: "Physical and Chemical", leadTime: 7  },
+  { code: "CHM", description: "Chemical", parameter: "Physical and Chemical", leadTime: 7  },
+  { code: "ENV", description: "Environmental", parameter: "Physical and Chemical", leadTime: 7  },
+  { code: "TOX", description: "Toxicology", parameter: "Physical and Chemical", leadTime: 7  },
+  { code: "MIC", description: "Microbiology", parameter: "Physical and Chemical", leadTime: 7  },
+  { code: "BIO", description: "Biotechnology", parameter: "Physical and Chemical", leadTime: 7  },
+  { code: "LAB", description: "Laboratory", parameter: "Physical and Chemical", leadTime: 7  },
 ];
+
 
 export default function DataTable({ data = sampleData, columns }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
+  const [tableData, setTableData] = useState([]);
+  const [loading, setLoading] = useState(true);
   
+
+
   // State untuk sheet
   const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
   const [isDeleteSheetOpen, setIsDeleteSheetOpen] = useState(false);
@@ -83,7 +86,7 @@ export default function DataTable({ data = sampleData, columns }) {
         value.toString().toLowerCase().includes(searchTerm.toLowerCase())
       )
     );
-  }, [data, searchTerm]);
+  }, [tableData, searchTerm]);
 
   // Pagination logic
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
@@ -199,6 +202,8 @@ export default function DataTable({ data = sampleData, columns }) {
             <TableRow>
               <TableHead className="text-white font-medium">Code</TableHead>
               <TableHead className="text-white font-medium">Description</TableHead>
+              <TableHead className="text-white font-medium">Parameter</TableHead>
+              <TableHead className="text-white font-medium">Lead Time</TableHead>
               <TableHead className="text-white font-medium text-center">Action</TableHead>
             </TableRow>
           </TableHeader>
@@ -210,6 +215,8 @@ export default function DataTable({ data = sampleData, columns }) {
               >
                 <TableCell className="font-medium">{item.code}</TableCell>
                 <TableCell>{item.description}</TableCell>
+                <TableCell>{item.parameter}</TableCell>
+                <TableCell>{item.leadTime}</TableCell>
                 <TableCell className="text-center">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>

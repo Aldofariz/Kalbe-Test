@@ -1,7 +1,6 @@
-// components/data-table.js
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -34,10 +33,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { Toaster } from "@/components/ui/sonner"
 import { Label } from "@/components/ui/label";
 import { MoreHorizontal, ChevronLeft, ChevronRight, X } from "lucide-react";
 
-// Sample data - ganti dengan data Anda
 const sampleData = [
   { code: "BCT", description: "Bacterial" },
   { code: "BIC", description: "Bioindicator Sample" },
@@ -49,7 +48,6 @@ const sampleData = [
   { code: "HSR", description: "Hand Sanitizer" },
   { code: "KIT", description: "Kit" },
   { code: "LQD", description: "Liquid" },
-  // Tambahkan lebih banyak data untuk testing pagination
   { code: "MED", description: "Medical Device" },
   { code: "PHR", description: "Pharmaceutical" },
   { code: "CHM", description: "Chemical" },
@@ -60,12 +58,120 @@ const sampleData = [
   { code: "LAB", description: "Laboratory" },
 ];
 
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL
+
+const apiService = {
+  // Get data with pagination and search
+  async getData(page = 1, limit = 10, search = '') {
+    try {
+      const params = new URLSearchParams({
+        _page: page.toString(),
+        _limit: limit.toString(),
+      });
+      
+      if (search) {
+        params.append('q', search);
+      }
+      
+      const response = await fetch(`${apiBaseUrl}/Parameters?${params}`);
+      const data = await response.json();
+      const totalItems = search ? data.length : 100; // Simulasi total
+      
+      // Transform data sesuai struktur kita (code, description)
+      const transformedData = data.map(item => ({
+        code: item.id,
+        description: item.title,
+      }));
+      
+      return {
+        data: transformedData,
+        totalItems,
+        totalPages: Math.ceil(totalItems / limit),
+        currentPage: page
+      };
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      throw new Error('Failed to fetch data');
+    }
+  },
+
+  async createItem(itemData) {
+    try {
+      const response = await fetch(`${apiBaseUrl}/Parameters`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: itemData.description,
+          body: `Item with code: ${itemData.code}`,
+          userId: 1
+        }),
+      });
+      
+      const data = await response.json();
+      return {
+        id: data.id,
+        code: itemData.code,
+        description: itemData.description,
+      };
+    } catch (error) {
+      console.error('Error creating item:', error);
+      throw new Error('Failed to create item');
+    }
+  },
+
+
+  async updateItem(id, itemData) {
+    try {
+      const response = await fetch(`${apiBaseUrl}/Parameters/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: id,
+          title: itemData.description,
+          body: `Item with code: ${itemData.code}`,
+        }),
+      });
+      
+      const data = await response.json();
+      return {
+        id: data.id,
+        code: itemData.code,
+        description: itemData.description,
+      };
+    } catch (error) {
+      console.error('Error updating item:', error);
+      throw new Error('Failed to update item');
+    }
+  },
+
+
+  async deleteItem(id) {
+    try {
+      const response = await fetch(`${apiBaseUrl}/Parameters/${id}`, {
+        method: 'DELETE',
+      });
+      
+      if (response.ok) {
+        return { success: true };
+      }
+      throw new Error('Delete failed');
+    } catch (error) {
+      console.error('Error deleting item:', error);
+      throw new Error('Failed to delete item');
+    }
+  }
+};
+
 export default function DataTable({ data = sampleData, columns }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
   
-  // State untuk sheet
+  
   const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
   const [isDeleteSheetOpen, setIsDeleteSheetOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -75,6 +181,60 @@ export default function DataTable({ data = sampleData, columns }) {
     code: "",
     description: ""
   });
+
+    
+
+  // Fetch data from API
+  const fetchData = async (page = currentPage, limit = itemsPerPage, search = searchTerm) => {
+    try {
+      setLoading(true);
+      const result = await apiService.getData(page, limit, search);
+      setData(result.data);
+      setTotalItems(result.totalItems);
+      setTotalPages(result.totalPages);
+    } catch (error) {
+      toast.error("Failed to save", {
+        description: error.message
+      })
+      
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Initial data load
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  // Debounced search effect
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchTerm !== undefined) {
+        setCurrentPage(1);
+        fetchData(1, itemsPerPage, searchTerm);
+      }
+    }, 500); // 500ms debounce
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  // Page change effect
+  useEffect(() => {
+    if (currentPage > 1) {
+      fetchData(currentPage, itemsPerPage, searchTerm);
+    }
+  }, [currentPage]);
+
+  // Items per page change effect
+  useEffect(() => {
+    if (itemsPerPage && currentPage === 1) {
+      fetchData(1, itemsPerPage, searchTerm);
+    } else if (itemsPerPage) {
+      setCurrentPage(1);
+    }
+  }, [itemsPerPage]);
+
 
   // Filter data berdasarkan search
   const filteredData = useMemo(() => {
@@ -131,22 +291,83 @@ export default function DataTable({ data = sampleData, columns }) {
     // Implementasi view logic
   };
 
-  // Handler untuk save edit
-  const handleSaveEdit = () => {
-    console.log("Saving edit:", editForm);
-    // Implementasi save logic di sini
-    // Misalnya: updateData(selectedItem.id, editForm)
-    setIsEditSheetOpen(false);
-    setSelectedItem(null);
+  const handleSaveAdd = async () => {
+    try {
+      setActionLoading(true);
+      const newItem = await apiService.createItem(formData);
+      
+      // Refresh data
+      await fetchData();
+      
+      setIsAddSheetOpen(false);
+      setFormData({ code: "", description: "" });
+      
+      toast({
+        title: "Success",
+        description: "Item created successfully!",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setActionLoading(false);
+    }
   };
 
-  // Handler untuk confirm delete
-  const handleConfirmDelete = () => {
-    console.log("Deleting:", selectedItem);
-    // Implementasi delete logic di sini
-    // Misalnya: deleteData(selectedItem.id)
-    setIsDeleteSheetOpen(false);
-    setSelectedItem(null);
+  // Handler untuk save edit
+   const handleSaveEdit = async () => {
+    try {
+      setActionLoading(true);
+      await apiService.updateItem(selectedItem.id, formData);
+      
+      // Refresh data
+      await fetchData();
+      
+      setIsEditSheetOpen(false);
+      setSelectedItem(null);
+      
+      toast({
+        title: "Success",
+        description: "Item updated successfully!",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      setActionLoading(true);
+      await apiService.deleteItem(selectedItem.id);
+      
+      // Refresh data
+      await fetchData();
+      
+      setIsDeleteSheetOpen(false);
+      setSelectedItem(null);
+      
+      toast({
+        title: "Success",
+        description: "Item deleted successfully!",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   // Handler untuk input change

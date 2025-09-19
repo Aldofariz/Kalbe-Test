@@ -12,7 +12,6 @@ const ParamPage = () => {
             </div>
             <h2 className='text-gray-500'>Manage parameter data</h2>
             <div className='max-w-7xl mx-auto bg-white rounded-lg shadow-md p-6 mt-4'>
-                {/* Table Data */}
                 <div>
                     <DataTable/>
                 </div>

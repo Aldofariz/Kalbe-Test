@@ -1,4 +1,3 @@
-// components/data-table.js
 "use client";
 
 import { useState, useMemo } from "react";
@@ -37,7 +36,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { MoreHorizontal, ChevronLeft, ChevronRight, X } from "lucide-react";
 
-// Sample data - ganti dengan data Anda
+
 const sampleData = [
   { code: "BCT", description: "Bacterial" },
   { code: "BIC", description: "Bioindicator Sample" },
@@ -49,7 +48,6 @@ const sampleData = [
   { code: "HSR", description: "Hand Sanitizer" },
   { code: "KIT", description: "Kit" },
   { code: "LQD", description: "Liquid" },
-  // Tambahkan lebih banyak data untuk testing pagination
   { code: "MED", description: "Medical Device" },
   { code: "PHR", description: "Pharmaceutical" },
   { code: "CHM", description: "Chemical" },
@@ -111,7 +109,6 @@ export default function DataTable({ data = sampleData, columns }) {
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   };
 
-  // Action handlers
   const handleEdit = (item) => {
     setSelectedItem(item);
     setEditForm({
@@ -128,14 +125,11 @@ export default function DataTable({ data = sampleData, columns }) {
 
   const handleView = (item) => {
     console.log("View:", item);
-    // Implementasi view logic
   };
 
   // Handler untuk save edit
   const handleSaveEdit = () => {
     console.log("Saving edit:", editForm);
-    // Implementasi save logic di sini
-    // Misalnya: updateData(selectedItem.id, editForm)
     setIsEditSheetOpen(false);
     setSelectedItem(null);
   };
@@ -262,7 +256,7 @@ export default function DataTable({ data = sampleData, columns }) {
 
           <div className="flex items-center space-x-1">
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
-              // Show only a few pages around current page
+              
               if (
                 page === 1 ||
                 page === totalPages ||
