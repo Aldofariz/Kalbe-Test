@@ -49,8 +49,7 @@ ca-lab-management/
 │   ├── 📂 components/              # UI Components
 │   │   ├── 📂 ui/                  # Shadcn/ui components
 │   │   └── 📂 forms/               # Form components
-│   ├── 📂 lib/                     # Utilities
-│   └── 📂 types/                   # TypeScript types
+│    
 ├── 📂 backend/                     # .NET Web API
 │   ├── 📂 Controllers/             # API Controllers
 │   ├── 📂 Data/                    # DbContext
