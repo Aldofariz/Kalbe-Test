@@ -29,8 +29,8 @@ This application provides CRUD operations for laboratory data management with th
 
 ## 🏗️ Tech Stack
 
-**Frontend:** Next.js 14, JavaScript, Tailwind CSS, Shadcn/ui  
-**Backend:** .NET 8 Web API, Entity Framework Core, MySQL  
+**Frontend:** Next.js 15, JavaScript, Tailwind CSS, Shadcn/ui  
+**Backend:** .NET Web API, Entity Framework Core, MySQL  
 **Database:** MySQL 8.0
 
 ## 📁 Project Structure
@@ -48,7 +48,7 @@ ca-lab-management/
 │   │   └── 📂 page.tsx             
 │   ├── 📂 components/              # UI Components
 │   │   ├── 📂 ui/                  # Shadcn/ui components
-│   │   └── 📂 forms/               # Form components
+│   │   
 │    
 ├── 📂 backend/                     # .NET Web API
 │   ├── 📂 Controllers/             # API Controllers
@@ -147,8 +147,8 @@ dotnet restore
 dotnet run
 ```
 
-Backend will run on: `https://localhost:5227`  
-Swagger documentation: `https://localhost:5227/swagger`
+Backend will run on: `http://localhost:5227`  
+Swagger documentation: `http://localhost:5227/swagger`
 
 ### 3. Frontend Setup (Next.js)
 
@@ -159,7 +159,7 @@ cd frontend
 npm install
 
 # Create environment file
-echo "NEXT_PUBLIC_API_URL=https://localhost:5227" > .env.local
+echo "NEXT_PUBLIC_API_URL=http://localhost:5227" > .env.local
 
 # Run development server
 npm run dev
@@ -202,7 +202,7 @@ Example: `/api/analyses?pageNumber=1&pageSize=10&search=test`
 ## 📚 Swagger Documentation
 
 Access the interactive API documentation at:
-`https://localhost:5227/swagger`
+`http://localhost:5227/swagger`
 
 The Swagger UI provides:
 - Complete API endpoint documentation
