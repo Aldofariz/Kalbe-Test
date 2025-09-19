@@ -29,7 +29,7 @@ This application provides CRUD operations for laboratory data management with th
 
 ## 🏗️ Tech Stack
 
-**Frontend:** Next.js 14, TypeScript, Tailwind CSS, Shadcn/ui  
+**Frontend:** Next.js 14, JavaScript, Tailwind CSS, Shadcn/ui  
 **Backend:** .NET 8 Web API, Entity Framework Core, MySQL  
 **Database:** MySQL 8.0
 
